@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>התחברות - מערכת ניהול תורמים</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            background-size: 200% 100%;
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .logo {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+		
+.logo img {
+    max-width: 250px;        /* לוגו ענק */
+    max-height: 180px;       /* לוגו ענק */
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 15px;     /* פינות מעוגלות יותר */
+    box-shadow: 0 6px 25px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.logo img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+}
+
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            text-align: right;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.error {
+            background: #ffe6e6;
+            color: #d63031;
+            border: 1px solid #fab1a0;
+        }
+        
+        .message.success {
+            background: #e6f7e6;
+            color: #00b894;
+            border: 1px solid #81ecec;
+        }
+        
+        .message.info {
+            background: #e6f3ff;
+            color: #0984e3;
+            border: 1px solid #74b9ff;
+        }
+        
+        .hidden { display: none; }
+        
+        .version {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #bbb;
+            font-size: 12px;
+        }
+        
+        .features {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .features h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .features ul {
+            list-style: none;
+            text-align: right;
+        }
+        
+        .features li {
+            margin-bottom: 8px;
+            padding-right: 20px;
+            position: relative;
+        }
+        
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            right: 0;
+            color: #00b894;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 25px;
+                margin: 10px;
+            }
+            
+            h1 { font-size: 24px; }
+            .logo { font-size: 48px; }
+        }
+        
+        /* Dark mode אוטומטי לפי העדפת המערכת */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            }
+            
+            .login-container {
+                background: #2c3e50;
+                color: #ecf0f1;
+            }
+            
+            h1, .features h3 {
+                color: #ecf0f1;
+            }
+            
+            .form-control {
+                background: #34495e;
+                border-color: #4a5568;
+                color: #ecf0f1;
+            }
+            
+            .form-control:focus {
+                background: #34495e;
+                border-color: #667eea;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+	<div class="logo">
+		<img src="logo.png" alt="לוגו" id="logoImage">
+	</div>
+        <h1>מערכת ניהול תורמים</h1>
+        <p class="subtitle">גרסה מתקדמת עם ניהול מלא</p>
+        
+        <div id="messageContainer"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">שם משתמש:</label>
+                <input type="text" id="username" class="form-control" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">סיסמה:</label>
+                <input type="password" id="password" class="form-control" required autocomplete="current-password">
+            </div>
+            
+            <button type="submit" class="btn" id="loginBtn">
+                <span id="btnText">התחבר למערכת</span>
+                <div class="loading-spinner" id="loadingSpinner"></div>
+            </button>
+        </form>
+    </div>
+    
+    <div class="version">גרסה 2.0 | מערכת מתקדמת</div>
+
+    <script>
+        // משתני גלובליים
+        let isLogging = false;
+
+        // טעינת הדף
+        window.onload = function() {
+            console.log('🔐 דף התחברות נטען');
+            
+            // בדיקה אם כבר מחובר
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('currentUser');
+            
+            if (token && user) {
+                console.log('🔑 נמצא טוקן קיים - מפנה אוטומטית');
+                try {
+                    const userData = JSON.parse(user);
+                    redirectUser(userData.role);
+                } catch (error) {
+                    console.error('❌ שגיאה בפענוח נתוני משתמש:', error);
+                    clearStoredAuth();
+                }
+            }
+            
+            // פוקוס על שדה שם המשתמש
+            document.getElementById('username').focus();
+        };
+
+        // טיפול בטופס התחברות
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (isLogging) return; // מניעת שליחה כפולה
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                showMessage('אנא מלא את כל השדות', 'error');
+                return;
+            }
+            
+            console.log('🔐 מנסה להתחבר עם משתמש:', username);
+            
+            try {
+                setLoading(true);
+                isLogging = true;
+                
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                console.log('📨 תגובת שרת:', { status: response.status, ok: response.ok });
+                
+                if (response.ok) {
+                    console.log('✅ התחברות הצליחה!');
+                    
+                    // שמירת נתוני המשתמש
+                    localStorage.setItem('authToken', data.token);
+                    localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    
+                    showMessage(`שלום ${data.user.full_name || data.user.username}! מתחבר...`, 'success');
+                    
+                    // המתנה קצרה להצגת הודעה ואז הפנייה
+                    setTimeout(() => {
+                        redirectUser(data.user.role);
+                    }, 1500);
+                    
+                } else {
+                    console.log('❌ התחברות נכשלה:', data.error);
+                    showMessage(data.error || 'שגיאה בהתחברות', 'error');
+                    
+                    // ניקוי שדות בשגיאה
+                    document.getElementById('password').value = '';
+                    document.getElementById('username').focus();
+                }
+                
+            } catch (error) {
+                console.error('💥 שגיאת רשת:', error);
+                showMessage('שגיאת תקשורת עם השרת. בדוק את החיבור.', 'error');
+            } finally {
+                setLoading(false);
+                isLogging = false;
+            }
+        });
+
+        // הפנייה לפי סוג משתמש
+        function redirectUser(role) {
+            console.log('🚀 מפנה משתמש מסוג:', role);
+            
+            if (role === 'admin') {
+                console.log('👑 מפנה לפאנל אדמין');
+                window.location.href = 'admin.html';
+            } else {
+                console.log('👤 מפנה לממשק טלפן');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // הצגת מצב טעינה
+        function setLoading(loading) {
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('loadingSpinner');
+            
+            if (loading) {
+                btn.disabled = true;
+                btnText.textContent = 'מתחבר...';
+                spinner.style.display = 'inline-block';
+                btn.style.cursor = 'not-allowed';
+            } else {
+                btn.disabled = false;
+                btnText.textContent = 'התחבר למערכת';
+                spinner.style.display = 'none';
+                btn.style.cursor = 'pointer';
+            }
+        }
+
+        // הצגת הודעות למשתמש
+        function showMessage(message, type = 'info') {
+            const container = document.getElementById('messageContainer');
+            
+            // ניקוי הודעות קודמות
+            container.innerHTML = '';
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            
+            container.appendChild(messageDiv);
+            
+            // הסרה אוטומטית אחרי 5 שניות (אלא אם זו הודעת הצלחה)
+            if (type !== 'success') {
+                setTimeout(() => {
+                    if (messageDiv.parentNode) {
+                        messageDiv.remove();
+                    }
+                }, 5000);
+            }
+        }
+
+        // ניקוי אימות שמור
+        function clearStoredAuth() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            console.log('🗑️ נתוני אימות נוקו');
+        }
+
+        // טיפול במקש Enter
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !isLogging) {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>
