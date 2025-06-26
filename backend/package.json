@@ -5,7 +5,8 @@
   "main": "advanced-server.js",
   "scripts": {
     "start": "node advanced-server.js",
-    "dev": "nodemon advanced-server.js"
+    "dev": "nodemon advanced-server.js",
+    "build": "npm rebuild sqlite3"
   },
   "dependencies": {
     "airtable": "^0.12.2",
@@ -18,7 +19,6 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "node-cron": "^4.1.1",
-    "pg": "^8.11.3",
     "sqlite3": "^5.1.7"
   },
   "engines": {
