@@ -59,7 +59,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // יצירת מסד נתונים
-const db = new sqlite3.Database('C:/DonationApp/advanced_database.sqlite', (err) => {
+const db = new sqlite3.Database('./advanced_database.sqlite', (err) => {
   if (err) {
     console.error('שגיאה בחיבור למסד נתונים:', err.message);
   } else {
