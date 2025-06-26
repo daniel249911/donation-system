@@ -1556,6 +1556,38 @@ text-align: center;
    </style>
 </head>
 <body>
+<script>
+// בדיקת הזדהות מיידית - לפני טעינת התוכן
+(function() {
+    const token = localStorage.getItem('authToken');
+    const user = localStorage.getItem('currentUser');
+    
+    if (!token || !user) {
+        // אין אימות - נווט מיד לדף התחברות
+        window.location.replace('login.html');
+        return;
+    }
+    
+    try {
+        const currentUser = JSON.parse(user);
+        
+        // אם זה אדמין - נווט לפאנל אדמין
+        if (currentUser.role === 'admin') {
+            window.location.replace('admin.html');
+            return;
+        }
+        
+        // אם הגענו לכאן - המשתמש מאומת ויכול לראות את הדף
+        
+    } catch (error) {
+        // שגיאה בפענוח - נווט לדף התחברות
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        window.location.replace('login.html');
+        return;
+    }
+})();
+</script>
    <!-- כותרת -->
    <div class="container">
        <div class="header">
@@ -1963,31 +1995,29 @@ text-align: center;
       let currentDonationType = null;
       let donationStats = {};
 
-// טעינת הדף
-window.onload = function() {
-    console.log('🚀 ממשק טלפן נטען');
-    
-    // הסתר את התוכן תחילה
-    document.body.style.display = 'none';
-    
-    // בדיקת הזדהות
-    checkAuthentication();
-    
-    // בדיקת מצב לילה
-    if (localStorage.getItem('darkMode') === 'true') {
-        document.body.classList.add('dark-mode');
-        updateDarkModeButton();
-    }
-};
+       // טעינת הדף
+       window.onload = function() {
+           console.log('🚀 ממשק טלפן נטען');
+           
+           // בדיקת הזדהות
+           checkAuthentication();
+           
+           // בדיקת מצב לילה
+           if (localStorage.getItem('darkMode') === 'true') {
+               document.body.classList.add('dark-mode');
+               updateDarkModeButton();
+           }
+       };
 
-// בדיקת הזדהות
+// בדיקת הזדהות (רק לאתחול הממשק)
 function checkAuthentication() {
     const token = localStorage.getItem('authToken');
     const user = localStorage.getItem('currentUser');
     
+    // אם הגענו לכאן, המשתמש כבר אומת בסקריפט הראשוני
     if (!token || !user) {
-        console.log('❌ לא מזוהה - מפנה לדף התחברות');
-        window.location.href = 'login.html';
+        // כאילו, אבל בוודאי ננווט
+        window.location.replace('login.html');
         return;
     }
     
@@ -1995,18 +2025,7 @@ function checkAuthentication() {
         currentUser = JSON.parse(user);
         authToken = token;
         
-        // בדיקה שהמשתמש אינו אדמין
-        if (currentUser.role === 'admin') {
-            console.log('🔄 אדמין - מפנה לפאנל ניהול');
-            window.location.href = 'admin.html';
-            return;
-        }
-        
         console.log('✅ משתמש מזוהה:', currentUser.username);
-        
-        // הצג את התוכן רק אחרי אימות מוצלח
-        document.body.style.display = 'block';
-        
         initializeInterface();
         
     } catch (error) {
@@ -4172,8 +4191,6 @@ document.getElementById('noteForm').addEventListener('submit', async function(e)
         showNotification('שגיאת תקשורת עם השרת', 'error');
     }
 });
-
-// הוסף את הפונקציות האלה לתוך תג <script> הקיים
 
 // טיפול בקלט חיפוש בדף התרמה
 function handleDonationSearchInput(input) {
